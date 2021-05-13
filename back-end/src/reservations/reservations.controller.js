@@ -88,7 +88,6 @@ async function create(req, res, next) {
   res.status(201).json({ data });
 }
 
-
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [validateNewReservationProperties, asyncErrorBoundary(create)],
