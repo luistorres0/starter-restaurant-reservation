@@ -23,6 +23,7 @@ function Routes() {
       </Route>
       <Route path="/dashboard">
         <Dashboard date={today()} />
+        {/* <Dashboard date={"2026-12-30" || today()} /> */}
       </Route>
       <Route>
         <NotFound />
