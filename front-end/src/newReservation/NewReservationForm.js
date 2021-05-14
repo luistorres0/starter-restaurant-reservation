@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { useHistory } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
 import { createReservation } from "../utils/api";
+import { previous } from "../utils/date-time";
 import formatReservationDate from "../utils/format-reservation-date";
 
 const NewReservationForm = () => {
   const [error, setError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
+
   const defaultFormData = {
     first_name: "",
     last_name: "",
@@ -20,6 +23,13 @@ const NewReservationForm = () => {
 
   const onChangeHandler = (event) => {
     const value = event.target.name === "people" ? Number(event.target.value) : event.target.value;
+
+    if (event.target.name === "reservation_date") {
+      const date = new Date(event.target.value);
+      console.log(date);
+      console.log(date.getUTCDay());
+    }
+
     setFormData((currentFormData) => {
       return {
         ...currentFormData,
@@ -35,20 +45,57 @@ const NewReservationForm = () => {
   const onCreateHandler = async (event) => {
     event.preventDefault();
 
-    try {
-      const createdReservation = await createReservation({ data: { ...formData } });
+    if (validateForm()) {
+      try {
+        const createdReservation = await createReservation({ data: { ...formData } });
 
-      formatReservationDate(createdReservation);
+        formatReservationDate(createdReservation);
 
-      history.push(`/dashboard?date=${createdReservation.reservation_date}`);
-    } catch (e) {
-      setError(e);
+        history.push(`/dashboard?date=${createdReservation.reservation_date}`);
+      } catch (e) {
+        setError(e);
+      }
     }
+  };
+
+  const validateForm = () => {
+    setValidationErrors([]);
+    const date = new Date(formData.reservation_date);
+
+    let isValid = true;
+
+    // check if date is a Tuesday
+    if (date.getUTCDay() === 2) {
+      setValidationErrors((currentErrors) => [
+        ...currentErrors,
+        {
+          message: "Reservation date cannot fall on a Tuesday.",
+        },
+      ]);
+      isValid =  false;
+    }
+
+    //check if date is in the past
+    const todayDate = new Date();
+    if (date < todayDate) {
+      setValidationErrors((currentErrors) => [
+        ...currentErrors,
+        {
+          message: "Reservation date cannot be a date in the past.",
+        },
+      ]);
+      isValid =  false;
+    }
+
+    return isValid;
   };
 
   return (
     <div>
       <h2 className="mt-3 mb-5">Create New Reservation</h2>
+      {validationErrors.map((valError, index) => (
+        <ErrorAlert key={index} error={valError} />
+      ))}
       <form onSubmit={onCreateHandler} className="w-50">
         <div className="form-group row">
           <label htmlFor="first_name" className="col-sm-2 col-form-label">
@@ -142,8 +189,8 @@ const NewReservationForm = () => {
               id="mobile_number"
               name="mobile_number"
               onChange={onChangeHandler}
-              pattern="[0-9]{3}-[0-9]{4}"
-              placeholder="888-8888"
+              // pattern="[0-9]{3}-[0-9]{4}"
+              placeholder="888-888-8888"
               value={formData.mobile_number}
               required
             />
