@@ -79,7 +79,7 @@ function validateNewReservationProperties(req, res, next) {
   }
 
   // check if date falls on a Tuesday
-  const date = new Date(newReservation.reservation_date);
+  const date = new Date(`${newReservation.reservation_date}T${newReservation.reservation_time}:00`);
   if (date.getUTCDay() === 2) {
     return next({
       status: 400,
@@ -93,6 +93,32 @@ function validateNewReservationProperties(req, res, next) {
     return next({
       status: 400,
       message: "Invalid date. Please select a date from the future.",
+    });
+  }
+
+  // check if time is before the restaurant opens at 10:30am
+  const hours = date.getHours();
+  const mins = date.getMinutes();
+  if (hours < 10 || (hours === 10 && mins < 30)) {
+    return next({
+      status: 400,
+      message: "Cannot reserve a time before the restaurant opens at 10:30am",
+    });
+  }
+
+  // check if time is after 9:30pm. Time is too close to closing time.
+  if ((hours === 21 && mins > 30) || (hours === 22 && mins < 30)) {
+    return next({
+      status: 400,
+      message: "Cannot reserve a time after 9:30 PM. Too close to closing time.",
+    });
+  }
+
+  // check if time is at or after 10:30pm. Restaurant closes at 10:30pm.
+  if (hours > 22 || (hours === 22 && mins >= 30)) {
+    return next({
+      status: 400,
+      message: "Cannot reserve a time after 10:30 PM. Restaurant closes at 10:30 PM.",
     });
   }
 
