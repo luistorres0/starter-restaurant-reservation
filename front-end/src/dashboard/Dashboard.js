@@ -12,8 +12,16 @@ import ReservationsTable from "./ReservationsTable";
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+  // State variable for the reservations
   const [reservations, setReservations] = useState([]);
+  // For setting an error if fetching the reservations goes wrong.
   const [reservationsError, setReservationsError] = useState(null);
+
+  // State variable for the tables
+  const [tables, setTables] = useState([...window.tables]); //TODO: CHANGE DEFAULT TO NULL WHEN API FETCH IS DONE
+  // For setting an error if fetching the tables goes wrong.
+  const [tablesError, setTablesError] = useState(null);
+
   const history = useHistory();
 
   useEffect(loadDashboard, [date]);
@@ -52,6 +60,21 @@ function Dashboard({ date }) {
 
       <ErrorAlert error={reservationsError} />
       <ReservationsTable reservations={reservations} />
+
+      {/* Display the tables */}
+      <h4 className="my-5">Tables</h4>
+      <ul>
+        {tables.map((table, index) => (
+          <li key={index}>
+            <p>
+              <strong>Table Name:</strong> {table.table_name}
+            </p>
+            <p>
+              <strong>Table Capacity:</strong> {table.capacity}
+            </p>
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }
