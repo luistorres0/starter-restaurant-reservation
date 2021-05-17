@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import ErrorAlert from "../layout/ErrorAlert";
 
 // Dummy database. Remove when you implement posting to backend API.
 window.tables = [];
 
 const NewTableForm = () => {
-  //   const [error, setError] = useState(null);
-  //   const [validationErrors, setValidationErrors] = useState([]);
+  const [error, setError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
 
   const defaultFormData = {
     table_name: "",
@@ -48,10 +49,18 @@ const NewTableForm = () => {
   };
 
   const validateForm = () => {
-    // const errors = [];
+    const errors = [];
     let isValid = true;
 
-    // setValidationErrors(errors);
+    // check if table name was provided
+    if (formData.table_name === "") {
+      errors.push({
+        message: "Table Name cannot be left empty.",
+      });
+      isValid = false;
+    }
+
+    setValidationErrors(errors);
 
     return isValid;
   };
@@ -63,6 +72,10 @@ const NewTableForm = () => {
   return (
     <div>
       <h2 className="mt-3 mb-5">Create Table</h2>
+
+      {validationErrors.map((valError, index) => (
+        <ErrorAlert key={index} error={valError} />
+      ))}
 
       <form onSubmit={onCreateHandler} className="w-50">
         <div className="form-group row">
