@@ -4,6 +4,7 @@ import ErrorAlert from "../layout/ErrorAlert";
 import { useHistory } from "react-router-dom";
 import { next, previous, today } from "../utils/date-time";
 import ReservationsTable from "./ReservationsTable";
+import RestaurantTablesTable from "./RestaurantTablesTable";
 
 /**
  * Defines the dashboard page.
@@ -61,20 +62,10 @@ function Dashboard({ date }) {
       <ErrorAlert error={reservationsError} />
       <ReservationsTable reservations={reservations} />
 
+      <hr style={{ "borderTop": "1px solid black"}} className="mt-5" />
+
       {/* Display the tables */}
-      <h4 className="my-5">Tables</h4>
-      <ul>
-        {tables.map((table, index) => (
-          <li key={index}>
-            <p>
-              <strong>Table Name:</strong> {table.table_name}
-            </p>
-            <p>
-              <strong>Table Capacity:</strong> {table.capacity}
-            </p>
-          </li>
-        ))}
-      </ul>
+      <RestaurantTablesTable tables={tables} />
     </main>
   );
 }
