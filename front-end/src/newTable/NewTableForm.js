@@ -60,6 +60,14 @@ const NewTableForm = () => {
       isValid = false;
     }
 
+    // check if table name is atleast 2 characters long
+    if (formData.table_name.length < 2) {
+      errors.push({
+        message: "Table Name must be atleast 2 characters long.",
+      });
+      isValid = false;
+    }
+
     setValidationErrors(errors);
 
     return isValid;
