@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useHistory } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
 import { createReservation } from "../utils/api";
-import { previous } from "../utils/date-time";
 import formatReservationDate from "../utils/format-reservation-date";
 
 const NewReservationForm = () => {
@@ -23,12 +22,6 @@ const NewReservationForm = () => {
 
   const onChangeHandler = (event) => {
     const value = event.target.name === "people" ? Number(event.target.value) : event.target.value;
-
-    if (event.target.name === "reservation_date") {
-      const date = new Date(event.target.value);
-      console.log(date);
-      console.log(date.getUTCDay());
-    }
 
     setFormData((currentFormData) => {
       return {
@@ -86,6 +79,8 @@ const NewReservationForm = () => {
       ]);
       isValid =  false;
     }
+
+    console.log(formData.reservation_time);
 
     return isValid;
   };
