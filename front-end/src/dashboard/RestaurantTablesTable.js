@@ -8,8 +8,10 @@ const RestaurantTablesTable = ({ tables }) => {
       <table className="table w-25">
         <thead>
           <tr>
+            <th>Table ID</th>
             <th>Table Name</th>
             <th>Capacity</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>

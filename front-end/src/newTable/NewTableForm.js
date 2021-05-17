@@ -4,6 +4,7 @@ import ErrorAlert from "../layout/ErrorAlert";
 
 // Dummy database. Remove when you implement posting to backend API.
 window.tables = [];
+window.table_id_max = 0;
 
 const NewTableForm = () => {
   const [error, setError] = useState(null);
@@ -31,7 +32,10 @@ const NewTableForm = () => {
 
     if (validateForm()) {
       // TODO: Delete this when done setting up posting to backend.
-      window.tables.push(formData);
+      window.table_id_max = Math.max(window.table_id_max, window.tables.length);
+      window.table_id_max++;
+      const newId = window.table_id_max;
+      window.tables.push({table_id: newId, ...formData, isFree: true});
       console.log(window.tables);
 
       history.push("/dashboard");
