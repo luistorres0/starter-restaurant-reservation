@@ -52,35 +52,59 @@ const NewReservationForm = () => {
   };
 
   const validateForm = () => {
-    setValidationErrors([]);
-    const date = new Date(formData.reservation_date);
+    const errors = [];
+    const date = new Date(`${formData.reservation_date}T${formData.reservation_time}:00`);
 
     let isValid = true;
 
     // check if date is a Tuesday
-    if (date.getUTCDay() === 2) {
-      setValidationErrors((currentErrors) => [
-        ...currentErrors,
-        {
-          message: "Reservation date cannot fall on a Tuesday.",
-        },
-      ]);
-      isValid =  false;
+    if (date.getDay() === 2) {
+      errors.push({
+        message: "Reservation date cannot fall on a Tuesday.",
+      });
+      isValid = false;
     }
 
     //check if date is in the past
     const todayDate = new Date();
     if (date < todayDate) {
-      setValidationErrors((currentErrors) => [
-        ...currentErrors,
-        {
-          message: "Reservation date cannot be a date in the past.",
-        },
-      ]);
-      isValid =  false;
+      errors.push({
+        message: "Reservation date cannot be a date in the past.",
+      });
+
+      isValid = false;
     }
 
-    console.log(formData.reservation_time);
+    // check if time is before the restaurant opens at 10:30am
+    const hours = date.getHours();
+    const mins = date.getMinutes();
+    if (hours < 10 || (hours === 10 && mins < 30)) {
+      errors.push({
+        message: "Cannot reserve a time before the restaurant opens at 10:30am",
+      });
+
+      isValid = false;
+    }
+
+    // check if time is after 9:30pm. Time is too close to closing time.
+    if ((hours === 21 && mins > 30) || (hours === 22 && mins < 30)) {
+      errors.push({
+        message: "Cannot reserve a time after 9:30 PM. Too close to closing time.",
+      });
+
+      isValid = false;
+    }
+
+    // check if time is at or after 10:30pm. Restaurant closes at 10:30pm.
+    if (hours > 22 || (hours === 22 && mins >= 30)) {
+      errors.push({
+        message: "Cannot reserve a time after 10:30 PM. Restaurant closes at 10:30 PM.",
+      });
+
+      isValid = false;
+    }
+
+    setValidationErrors(errors);
 
     return isValid;
   };
