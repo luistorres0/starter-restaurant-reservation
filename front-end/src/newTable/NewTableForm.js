@@ -68,6 +68,28 @@ const NewTableForm = () => {
       isValid = false;
     }
 
+    // check if capacity was provided
+    if (formData.capacity === "") {
+      errors.push({
+        message: "Capacity must not be left empty.",
+      });
+      isValid = false;
+    } else if (isNaN(formData.capacity)) {
+      // check if capacity is a number
+      errors.push({
+        message: "Capacity must be a number.",
+      });
+      isValid = false;
+    } else {
+      // check if capacity is atleast 1
+      if (Number(formData.capacity) < 1) {
+        errors.push({
+          message: "Capacity must be atleast 1.",
+        });
+        isValid = false;
+      }
+    }
+
     setValidationErrors(errors);
 
     return isValid;
