@@ -12,29 +12,13 @@ import RestaurantTablesTable from "./RestaurantTablesTable";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date }) {
-  // State variable for the reservations
-  const [reservations, setReservations] = useState([]);
-  // For setting an error if fetching the reservations goes wrong.
-  const [reservationsError, setReservationsError] = useState(null);
-
+function Dashboard({ reservations, error, date }) {
   // State variable for the tables
   const [tables, setTables] = useState([...window.tables]); //TODO: CHANGE DEFAULT TO NULL WHEN API FETCH IS DONE
   // For setting an error if fetching the tables goes wrong.
   const [tablesError, setTablesError] = useState(null);
 
   const history = useHistory();
-
-  useEffect(loadDashboard, [date]);
-
-  function loadDashboard() {
-    const abortController = new AbortController();
-    setReservationsError(null);
-    listReservations({ date }, abortController.signal)
-      .then(setReservations)
-      .catch(setReservationsError);
-    return () => abortController.abort();
-  }
 
   const handleChangeDate = (newDate) => {
     history.push(`/dashboard?date=${newDate}`);
@@ -59,7 +43,7 @@ function Dashboard({ date }) {
         Next
       </button>
 
-      <ErrorAlert error={reservationsError} />
+      <ErrorAlert error={error} />
       <ReservationsTable reservations={reservations} />
 
       <hr style={{ "borderTop": "1px solid black"}} className="mt-5" />

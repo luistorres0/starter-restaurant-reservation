@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
@@ -7,6 +7,7 @@ import { today } from "../utils/date-time";
 import NewReservationForm from "../newReservation/NewReservationForm";
 import NewTableForm from "../newTable/NewTableForm";
 import SeatReservationForm from "../seatReservation/SeatReservationForm";
+import { listReservations } from "../utils/api";
 
 /**
  * Defines all the routes for the application.
@@ -17,6 +18,24 @@ import SeatReservationForm from "../seatReservation/SeatReservationForm";
  */
 function Routes() {
   const urlDate = new URLSearchParams(useLocation().search).get("date");
+  const date = urlDate || today();
+
+  // State variable for the reservations
+  const [reservations, setReservations] = useState([]);
+
+  // For setting an error if fetching the reservations goes wrong.
+  const [reservationsError, setReservationsError] = useState(null);
+
+  useEffect(loadDashboard, [date]);
+
+  function loadDashboard() {
+    const abortController = new AbortController();
+    setReservationsError(null);
+    listReservations({ date }, abortController.signal)
+      .then(setReservations)
+      .catch(setReservationsError);
+    return () => abortController.abort();
+  }
 
   return (
     <Switch>
@@ -36,7 +55,7 @@ function Routes() {
         <NewTableForm />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={urlDate || today()} />
+        <Dashboard reservations={reservations} error={reservationsError} date={date} />
       </Route>
       <Route>
         <NotFound />
