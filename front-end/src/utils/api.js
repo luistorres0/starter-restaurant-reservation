@@ -78,3 +78,8 @@ export async function createReservation(newReservation) {
     []
   );
 }
+
+export async function createTable(newTable) {
+  const url = new URL(`${API_BASE_URL}/tables`);
+  return await fetchJson(url, { method: "POST", headers, body: JSON.stringify(newTable) }, []);
+}

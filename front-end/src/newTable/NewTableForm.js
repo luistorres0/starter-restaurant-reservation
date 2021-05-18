@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
+import { createTable } from "../utils/api";
 
 // Dummy database. Remove when you implement posting to backend API.
 window.tables = [];
 window.table_id_max = 0;
 
-const NewTableForm = () => {
+const NewTableForm = ({loadTables}) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
 
@@ -31,24 +32,13 @@ const NewTableForm = () => {
     event.preventDefault();
 
     if (validateForm()) {
-      // TODO: Delete this when done setting up posting to backend.
-      window.table_id_max = Math.max(window.table_id_max, window.tables.length);
-      window.table_id_max++;
-      const newId = window.table_id_max;
-      window.tables.push({table_id: newId, ...formData, reservation_id: null});
-      console.log(window.tables);
-
-      history.push("/dashboard");
-
-      // TODO: RETURN HERE WHEN YOUR READY TO CREATE THE TABLE.
-      //   try {
-      //     const createdReservation = await createReservation({ data: { ...formData } });
-      //     formatReservationDate(createdReservation);
-      //     history.push(`/dashboard?date=${createdReservation.reservation_date}`);
-      //   } catch (e) {
-      //     setError(e);
-      //   }
-      // }
+      try {
+        await createTable({ data: { ...formData } });
+        loadTables();
+        history.push("/dashboard");
+      } catch (e) {
+        setError(e);
+      }
     }
   };
 

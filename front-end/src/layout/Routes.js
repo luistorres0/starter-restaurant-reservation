@@ -32,9 +32,9 @@ function Routes() {
   // For setting an error if fetching the tables goes wrong.
   const [tablesError, setTablesError] = useState(null);
 
-  useEffect(loadDashboard, [date]);
+  useEffect(loadReservations, [date]);
 
-  function loadDashboard() {
+  function loadReservations() {
     const abortController = new AbortController();
     setReservationsError(null);
     listReservations({ date }, abortController.signal)
@@ -67,7 +67,7 @@ function Routes() {
         <NewReservationForm />
       </Route>
       <Route path="/tables/new">
-        <NewTableForm />
+        <NewTableForm loadTables={loadTables}/>
       </Route>
       <Route path="/dashboard">
         <Dashboard
