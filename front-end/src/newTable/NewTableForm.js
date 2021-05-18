@@ -35,7 +35,7 @@ const NewTableForm = () => {
       window.table_id_max = Math.max(window.table_id_max, window.tables.length);
       window.table_id_max++;
       const newId = window.table_id_max;
-      window.tables.push({table_id: newId, ...formData, isFree: true});
+      window.tables.push({table_id: newId, ...formData, reservation_id: null});
       console.log(window.tables);
 
       history.push("/dashboard");
