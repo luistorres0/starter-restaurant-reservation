@@ -2,22 +2,6 @@ import React, { useState } from "react";
 import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
 
-// dummy tables for testing.
-const testTables = [
-  {
-    table_id: 1,
-    table_name: "#1",
-    capacity: 2,
-    reservation_id: null,
-  },
-  {
-    table_id: 2,
-    table_name: "#2",
-    capacity: 4,
-    reservation_id: null,
-  },
-];
-
 // dummy reservations for testing.
 const testReservations = [
   {
@@ -40,10 +24,9 @@ const testReservations = [
   },
 ];
 
-const SeatReservationForm = () => {
+const SeatReservationForm = ({ reservations, tables }) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
-  const [tables, setTables] = useState([...window.tables]); //TODO: Change default to null when backend is implemented
   const [tableId, setTableId] = useState(0);
   const { reservation_id } = useParams();
 
@@ -55,21 +38,9 @@ const SeatReservationForm = () => {
 
   const onCreateHandler = async (event) => {
     event.preventDefault();
+    console.log(tableId);
 
-    const tablesIndex = testTables.findIndex((table) => table.table_id === Number(tableId));
-    const reservationsIndex = testReservations.findIndex(
-      (reservation) => reservation.reservation_id === Number(reservation_id)
-    );
-    const currentTable = testTables[tablesIndex];
-    const currentReservation = testReservations[reservationsIndex];
-
-    console.log("res id", reservation_id);
-    console.log("table", currentTable);
-    console.log("reservation", currentReservation);
-
-    if (validateForm(currentTable, currentReservation)) {
-      testTables[tablesIndex].reservation_id = Number(reservation_id);
-
+    if (validateForm()) {
       history.push("/dashboard");
 
       // TODO: RETURN HERE WHEN YOUR READY TO CREATE THE TABLE.
@@ -84,9 +55,19 @@ const SeatReservationForm = () => {
     }
   };
 
-  const validateForm = (table, reservation) => {
+  const validateForm = () => {
     const errors = [];
     let isValid = true;
+
+    console.log(reservations);
+    const reservation = reservations.find(
+      (reservation) => reservation.reservation_id === Number(reservation_id)
+    );
+
+    const table = tables.find((table) => table.table_id === Number(tableId));
+
+    console.log(reservation);
+    console.log(table);
 
     // check if the reservation party exceeds the capacity of the table
     if (reservation.people > table.capacity) {
@@ -129,10 +110,8 @@ const SeatReservationForm = () => {
             >
               {/* TODO: OPTIONS WITH TABLES */}
               {/* First the default option */}
-              <option defaultValue={0}>
-                Select table
-              </option>
-              {testTables.map((table) => (
+              <option defaultValue={0}>Select table</option>
+              {tables.map((table) => (
                 <option key={table.table_id} value={table.table_id}>
                   {`${table.table_name} - ${table.capacity}`}
                 </option>

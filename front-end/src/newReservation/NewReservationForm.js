@@ -4,9 +4,10 @@ import ErrorAlert from "../layout/ErrorAlert";
 import { createReservation } from "../utils/api";
 import formatReservationDate from "../utils/format-reservation-date";
 
-const NewReservationForm = () => {
+const NewReservationForm = ({ loadReservations, date }) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
+  console.log(date);
 
   const defaultFormData = {
     first_name: "",
@@ -43,6 +44,15 @@ const NewReservationForm = () => {
         const createdReservation = await createReservation({ data: { ...formData } });
 
         formatReservationDate(createdReservation);
+
+        // BUG FIX: Dashboard failed to update reservations when creating reservation on the present day, for the present day.
+        // The 'date' dependency in Routes.js and the 'urlDate' from query parameter were equal, therefore 'useEffect(loadReservations, [date])'
+        // detected no change in its dependency 'date' which resulted in not running loadReservations.
+        if (createdReservation.reservation_date === date) {
+          console.log(date);
+          console.log("date are a match");
+          loadReservations();
+        }
 
         history.push(`/dashboard?date=${createdReservation.reservation_date}`);
       } catch (e) {
