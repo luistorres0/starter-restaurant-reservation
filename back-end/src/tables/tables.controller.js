@@ -22,23 +22,47 @@ let tables = [
 
 let table_id_max = 0;
 
-async function list(req, res, next) {
-  const data = tables;
-  res.json({ data });
-}
+async function validateNewTable(req, res, next) {
+  const tableData = req.body.data;
+  tableData.capacity = Number(tableData.capacity);
 
-async function create(req, res, next) {
+  // check if capacity is 1 or greater
+  if (tableData.capacity < 1) {
+    return next({
+      status: 400,
+      message: "Capacity must be 1 or greater",
+    });
+  }
+
+  // check if table name length is 2 or greater.
+  if (tableData.table_name.length < 2) {
+    return next({
+      status: 400,
+      message: "Table name must be 2 or greater",
+    });
+  }
+
   table_id_max = Math.max(table_id_max, tables.length);
   table_id_max++;
   const newId = table_id_max;
 
   const newTable = {
     table_id: newId,
-    ...req.body.data,
+    ...tableData,
     reservation_id: null,
   };
 
-  newTable.capacity = Number(newTable.capacity);
+  res.locals.newTable = newTable;
+  next();
+}
+
+async function list(req, res, next) {
+  const data = tables;
+  res.json({ data });
+}
+
+async function create(req, res, next) {
+  const newTable = res.locals.newTable;
 
   tables.push(newTable);
 
@@ -47,5 +71,5 @@ async function create(req, res, next) {
 
 module.exports = {
   list,
-  create,
+  create: [validateNewTable, create],
 };
