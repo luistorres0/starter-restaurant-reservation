@@ -7,7 +7,7 @@ import { today } from "../utils/date-time";
 import NewReservationForm from "../newReservation/NewReservationForm";
 import NewTableForm from "../newTable/NewTableForm";
 import SeatReservationForm from "../seatReservation/SeatReservationForm";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 
 /**
  * Defines all the routes for the application.
@@ -26,6 +26,12 @@ function Routes() {
   // For setting an error if fetching the reservations goes wrong.
   const [reservationsError, setReservationsError] = useState(null);
 
+  // State variable for the tables
+  const [tables, setTables] = useState([]); //TODO: CHANGE DEFAULT TO NULL WHEN API FETCH IS DONE
+
+  // For setting an error if fetching the tables goes wrong.
+  const [tablesError, setTablesError] = useState(null);
+
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
@@ -34,6 +40,15 @@ function Routes() {
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+    return () => abortController.abort();
+  }
+
+  useEffect(loadTables, []);
+
+  function loadTables() {
+    const abortController = new AbortController();
+    setTablesError(null);
+    listTables(abortController.signal).then(setTables).catch(setTablesError);
     return () => abortController.abort();
   }
 
@@ -55,7 +70,13 @@ function Routes() {
         <NewTableForm />
       </Route>
       <Route path="/dashboard">
-        <Dashboard reservations={reservations} error={reservationsError} date={date} />
+        <Dashboard
+          reservations={reservations}
+          tables={tables}
+          reservationsError={reservationsError}
+          tablesError={tablesError}
+          date={date}
+        />
       </Route>
       <Route>
         <NotFound />
