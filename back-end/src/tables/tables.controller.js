@@ -69,7 +69,18 @@ async function create(req, res, next) {
   res.json({ data: newTable });
 }
 
+async function update(req, res, next) {
+  const { reservation_id } = req.body.data;
+  const { tableId } = req.params;
+
+  const foundTable = tables.find((table) => table.table_id === Number(tableId));
+  foundTable.reservation_id = Number(reservation_id);
+
+  res.json({ data: foundTable });
+}
+
 module.exports = {
   list,
   create: [validateNewTable, create],
+  update,
 };

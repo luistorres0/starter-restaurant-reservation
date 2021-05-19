@@ -3,11 +3,7 @@ import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import { createTable } from "../utils/api";
 
-// Dummy database. Remove when you implement posting to backend API.
-window.tables = [];
-window.table_id_max = 0;
-
-const NewTableForm = ({loadTables}) => {
+const NewTableForm = ({ loadTables }) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
 
@@ -141,6 +137,7 @@ const NewTableForm = ({loadTables}) => {
           </button>
         </div>
       </form>
+      <ErrorAlert error={error} />
     </div>
   );
 };

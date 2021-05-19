@@ -1,30 +1,9 @@
 import React, { useState } from "react";
 import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
+import { updateTable } from "../utils/api";
 
-// dummy reservations for testing.
-const testReservations = [
-  {
-    reservation_id: 1,
-    first_name: "Luis",
-    last_name: "Torres",
-    mobile_number: "931-446-4816",
-    reservation_date: "2021-05-20",
-    reservation_time: "12:00",
-    people: 2,
-  },
-  {
-    reservation_id: 2,
-    first_name: "Jeanette",
-    last_name: "Opoku",
-    mobile_number: "931-446-4816",
-    reservation_date: "2021-05-20",
-    reservation_time: "15:00",
-    people: 5,
-  },
-];
-
-const SeatReservationForm = ({ reservations, tables }) => {
+const SeatReservationForm = ({ reservations, tables, loadTables }) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
   const [tableId, setTableId] = useState(0);
@@ -38,20 +17,14 @@ const SeatReservationForm = ({ reservations, tables }) => {
 
   const onCreateHandler = async (event) => {
     event.preventDefault();
-    console.log(tableId);
-
     if (validateForm()) {
-      history.push("/dashboard");
-
-      // TODO: RETURN HERE WHEN YOUR READY TO CREATE THE TABLE.
-      //   try {
-      //     const createdReservation = await createReservation({ data: { ...formData } });
-      //     formatReservationDate(createdReservation);
-      //     history.push(`/dashboard?date=${createdReservation.reservation_date}`);
-      //   } catch (e) {
-      //     setError(e);
-      //   }
-      // }
+      try {
+        await updateTable(tableId, { data: { reservation_id } });
+        loadTables();
+        history.push("/dashboard");
+      } catch (e) {
+        setError(e);
+      }
     }
   };
 
@@ -59,15 +32,11 @@ const SeatReservationForm = ({ reservations, tables }) => {
     const errors = [];
     let isValid = true;
 
-    console.log(reservations);
     const reservation = reservations.find(
       (reservation) => reservation.reservation_id === Number(reservation_id)
     );
 
     const table = tables.find((table) => table.table_id === Number(tableId));
-
-    console.log(reservation);
-    console.log(table);
 
     // check if the reservation party exceeds the capacity of the table
     if (reservation.people > table.capacity) {
@@ -75,6 +44,14 @@ const SeatReservationForm = ({ reservations, tables }) => {
         message: "Party size exceeds table capacity.",
       });
 
+      isValid = false;
+    }
+
+    // check if the table is already occupied
+    if (table.reservation_id) {
+      errors.push({
+        message: "Table is already occupied.",
+      });
       isValid = false;
     }
 
@@ -128,6 +105,7 @@ const SeatReservationForm = ({ reservations, tables }) => {
           </button>
         </div>
       </form>
+      <ErrorAlert error={error} />
     </div>
   );
 };

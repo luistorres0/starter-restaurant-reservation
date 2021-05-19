@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
-import { next, today } from "../utils/date-time";
+import { today } from "../utils/date-time";
 import NewReservationForm from "../newReservation/NewReservationForm";
 import NewTableForm from "../newTable/NewTableForm";
 import SeatReservationForm from "../seatReservation/SeatReservationForm";
@@ -18,7 +18,7 @@ import { listReservations, listTables } from "../utils/api";
  */
 function Routes() {
   const urlDate = new URLSearchParams(useLocation().search).get("date");
-  const date = urlDate || next(today()); //TODO: CHANGE BACK TO 'today()' AFTER TESTING SEAT RESERVATIONS ROUTE
+  const date = urlDate || today(); //TODO: CHANGE BACK TO 'today()' AFTER TESTING SEAT RESERVATIONS ROUTE
 
   // State variable for the reservations
   const [reservations, setReservations] = useState([]);
@@ -61,7 +61,7 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/reservations/:reservation_id/seat">
-        <SeatReservationForm reservations={reservations} tables={tables} />
+        <SeatReservationForm reservations={reservations} tables={tables} loadTables={loadTables} />
       </Route>
       <Route path="/reservations/new">
         <NewReservationForm loadReservations={loadReservations} date={date} />
