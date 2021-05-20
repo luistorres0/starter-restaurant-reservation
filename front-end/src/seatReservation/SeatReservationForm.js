@@ -27,6 +27,7 @@ const SeatReservationForm = ({ reservations, tables, loadTables, reservationToSe
 
   const onCreateHandler = async (event) => {
     event.preventDefault();
+
     if (validateForm()) {
       try {
         await updateTable(tableId, { data: { reservation_id } });
