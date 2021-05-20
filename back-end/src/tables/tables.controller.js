@@ -1,3 +1,4 @@
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./tables.service");
 
 //TODO: REMOVE DUMMY DATA WHEN DB IS SETUP
@@ -113,7 +114,7 @@ async function validateSeatReservation(req, res, next) {
 // ================================================================================================================== //
 
 async function list(req, res, next) {
-  const data = tables;
+  const data = await service.list();
   res.json({ data });
 }
 
@@ -141,7 +142,7 @@ async function update(req, res, next) {
 // ====================================================== //
 
 module.exports = {
-  list,
+  list: [asyncErrorBoundary(list)],
   create: [validateNewTable, create],
   update: [tableExists, validateSeatReservation, update],
 };
