@@ -1,3 +1,5 @@
+const service = require("./tables.service");
+
 //TODO: REMOVE DUMMY DATA WHEN DB IS SETUP
 
 let tables = [
@@ -67,11 +69,11 @@ async function tableExists(req, res, next) {
   const { tableId } = req.params;
 
   const foundTable = tables.find((table) => table.table_id === Number(tableId));
-  if(!foundTable){
+  if (!foundTable) {
     return next({
       status: 400,
-      message: `Table ${tableId} not found.`
-    })
+      message: `Table ${tableId} not found.`,
+    });
   }
 
   res.locals.table = foundTable;
@@ -80,14 +82,29 @@ async function tableExists(req, res, next) {
 
 // ====================================================== //
 
-async function validateSeatReservation(req, res, next){
+async function validateSeatReservation(req, res, next) {
   // get the foundTable
+  const { table } = res.locals;
+
   // try to find the reservation for incoming reservation_id
+  const reservation = await service.getReservationById(Number(req.body.data.reservation_id));
+
   // if reservation found, check if reservation party size is less than or equal to table capacity
+  if (reservation.people > table.capacity) {
+    return next({
+      status: 400,
+      message: "Reservation party size exceeds table capacity.",
+    });
+  }
+
   // also check if table is free
+  if (table.reservation_id) {
+    return next({
+      status: 400,
+      message: "Table is already occupied.",
+    });
+  }
   // if party size passes check, then assign reservation id to table.reservation_id
-  // if not, throw error
-  // if table is not free throw error
   next();
 }
 
@@ -114,7 +131,7 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   const { reservation_id } = req.body.data;
-  const {table} = res.locals;
+  const { table } = res.locals;
 
   table.reservation_id = Number(reservation_id);
 
@@ -126,5 +143,5 @@ async function update(req, res, next) {
 module.exports = {
   list,
   create: [validateNewTable, create],
-  update: [tableExists, update]
+  update: [tableExists, validateSeatReservation, update],
 };
