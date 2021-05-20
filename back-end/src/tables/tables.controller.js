@@ -59,7 +59,8 @@ async function validateNewTable(req, res, next) {
 async function tableExists(req, res, next) {
   const { tableId } = req.params;
 
-  const foundTable = tables.find((table) => table.table_id === Number(tableId));
+  // const foundTable = tables.find((table) => table.table_id === Number(tableId));
+  const foundTable = await service.read(Number(tableId));
   if (!foundTable) {
     return next({
       status: 400,
@@ -68,7 +69,7 @@ async function tableExists(req, res, next) {
   }
 
   res.locals.table = foundTable;
-  next();
+  next(); // next stop: 'validateSeatReservations()'
 }
 
 // ====================================================== //
@@ -76,9 +77,18 @@ async function tableExists(req, res, next) {
 async function validateSeatReservation(req, res, next) {
   // get the foundTable
   const { table } = res.locals;
+  const { reservation_id } = req.body.data;
 
   // try to find the reservation for incoming reservation_id
-  const reservation = await service.getReservationById(Number(req.body.data.reservation_id));
+  const reservation = await service.getReservationById(Number(reservation_id));
+
+  // if no reservation found for provided id then throw error
+  if (!reservation) {
+    return next({
+      status: 400,
+      message: `Reservation for id ${reservation_id} not found.`,
+    });
+  }
 
   // if reservation found, check if reservation party size is less than or equal to table capacity
   if (reservation.people > table.capacity) {
@@ -95,7 +105,7 @@ async function validateSeatReservation(req, res, next) {
       message: "Table is already occupied.",
     });
   }
-  // if party size passes check, then assign reservation id to table.reservation_id
+  // if validation checks pass, move on to 'update()'
   next();
 }
 
@@ -114,7 +124,6 @@ async function create(req, res, next) {
   const newTable = res.locals.newTable;
 
   const data = await service.create(newTable);
-  console.log(data);
 
   res.json({ data });
 }
@@ -125,15 +134,16 @@ async function update(req, res, next) {
   const { reservation_id } = req.body.data;
   const { table } = res.locals;
 
-  table.reservation_id = Number(reservation_id);
+  const data = await service.update(table.table_id, Number(reservation_id));
+  console.log(data);
 
-  res.json({ data: table });
+  res.json({ data });
 }
 
 // ====================================================== //
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
-  create: [validateNewTable, create],
+  create: [validateNewTable, asyncErrorBoundary(create)],
   update: [tableExists, validateSeatReservation, update],
 };
