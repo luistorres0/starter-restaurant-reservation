@@ -97,13 +97,27 @@ async function tableExists(req, res, next) {
   const foundTable = await service.read(Number(tableId));
   if (!foundTable) {
     return next({
-      status: 400,
+      status: 404,
       message: `Table ${tableId} not found.`,
     });
   }
 
   res.locals.table = foundTable;
   next(); // next stop: 'validateSeatReservations()'
+}
+
+// ====================================================== //
+
+function tableIsOccupied(req, res, next) {
+  const table = res.locals.table;
+  if (table.reservation_id === null) {
+    return next({
+      status: 400,
+      message: `Table is not occupied.`,
+    });
+  }
+
+  next();
 }
 
 // ====================================================== //
@@ -118,7 +132,7 @@ async function validateSeatReservation(req, res, next) {
   }
 
   // check if reservation_id is missing
-  if(req.body.data.reservation_id === undefined){
+  if (req.body.data.reservation_id === undefined) {
     return next({
       status: 400,
       message: "Request body must have a 'reservation_id' property.",
@@ -189,6 +203,12 @@ async function update(req, res, next) {
   res.json({ data });
 }
 
+async function freeTable(req, res, next) {
+  const table = res.locals.table;
+  const data = await service.removeReservationFromTable(table.table_id);
+  res.json({ data });
+}
+
 // ====================================================== //
 
 module.exports = {
@@ -199,4 +219,5 @@ module.exports = {
     asyncErrorBoundary(validateSeatReservation),
     asyncErrorBoundary(update),
   ],
+  freeTable: [asyncErrorBoundary(tableExists), tableIsOccupied, asyncErrorBoundary(freeTable)],
 };

@@ -76,6 +76,7 @@ function Routes() {
           reservationsError={reservationsError}
           tablesError={tablesError}
           date={date}
+          loadTables={loadTables}
         />
       </Route>
       <Route>

@@ -1,16 +1,18 @@
 import React from "react";
+import { deleteReservationFromTable } from "../utils/api";
 import RestaurantTableRecord from "./RestaurantTableRecord";
 
-const RestaurantTablesTable = ({ tables }) => {
-  const onFinishHandler = (table_id) => {
+const RestaurantTablesTable = ({ tables, loadTables }) => {
+  const onFinishHandler = async (table_id) => {
     const isOk = window.confirm("Is this table ready to seat new guests? This cannot be undone.");
 
     if (isOk) {
       console.log(`Deleting table: ${table_id}`);
-    } else {
-      console.log("Do nothing");
+      await deleteReservationFromTable(table_id);
+      await loadTables();
     }
   };
+
   return (
     <div>
       <h4 className="mt-5 mb-1">Tables</h4>

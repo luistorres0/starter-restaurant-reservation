@@ -93,3 +93,8 @@ export async function getReservationById(reservation_id) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
   return await fetchJson(url, { headers }, []);
 }
+
+export async function deleteReservationFromTable(tableId) {
+  const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
+  return await fetchJson(url, { method: "DELETE", headers }, []);
+}
