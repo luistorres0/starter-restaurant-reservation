@@ -125,6 +125,22 @@ function validateNewReservationProperties(req, res, next) {
   next();
 }
 
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params;
+
+  const foundReservation = await service.read(Number(reservation_id));
+
+  if (!foundReservation) {
+    return next({
+      status: 400,
+      message: `Reservation for id ${reservation_id} not found.`,
+    });
+  }
+
+  res.locals.reservation = foundReservation;
+  next();
+}
+
 async function create(req, res, next) {
   const newReservation = req.body.data;
   const data = await service.create(newReservation);
@@ -132,7 +148,14 @@ async function create(req, res, next) {
   res.status(201).json({ data });
 }
 
+async function read(req, res, next) {
+  const data = res.locals.reservation;
+
+  res.json({ data });
+}
+
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [validateNewReservationProperties, asyncErrorBoundary(create)],
+  read: [asyncErrorBoundary(reservationExists), read],
 };

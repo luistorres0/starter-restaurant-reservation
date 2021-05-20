@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import { updateTable } from "../utils/api";
+import { getReservationById, updateTable } from "../utils/api";
 
-const SeatReservationForm = ({ reservations, tables, loadTables }) => {
+const SeatReservationForm = ({ reservations, tables, loadTables, reservationToSeat }) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
   const [tableId, setTableId] = useState(0);
   const { reservation_id } = useParams();
+  const [reservation, setReservation] = useState(null);
 
   const history = useHistory();
+
+  useEffect(loadReservation, [reservation_id]);
+
+  function loadReservation() {
+    const abortController = new AbortController();
+    setError(null);
+    getReservationById(reservation_id, abortController.signal).then(setReservation).catch(setError);
+    return () => abortController.abort();
+  }
 
   const onChangeHandler = (event) => {
     setTableId(event.target.value);
@@ -31,10 +41,6 @@ const SeatReservationForm = ({ reservations, tables, loadTables }) => {
   const validateForm = () => {
     const errors = [];
     let isValid = true;
-
-    const reservation = reservations.find(
-      (reservation) => reservation.reservation_id === Number(reservation_id)
-    );
 
     const table = tables.find((table) => table.table_id === Number(tableId));
 

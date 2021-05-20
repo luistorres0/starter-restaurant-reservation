@@ -1,3 +1,4 @@
+const { table } = require("../db/connection");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./tables.service");
 
@@ -31,22 +32,55 @@ let table_id_max = 0;
 // ================================================================================================================== //
 
 async function validateNewTable(req, res, next) {
-  const tableData = req.body.data;
-  tableData.capacity = Number(tableData.capacity);
-
-  // check if capacity is 1 or greater
-  if (tableData.capacity < 1) {
+  // check that 'data' property is present
+  if (!req.body.data) {
     return next({
       status: 400,
-      message: "Capacity must be 1 or greater",
+      message: "Request body must have a 'data' property.",
     });
   }
 
-  // check if table name length is 2 or greater.
+  const tableData = req.body.data;
+
+  // check for 'table_name' is missing
+  if (tableData.table_name === undefined) {
+    return next({
+      status: 400,
+      message: "Request body is missing 'table_name'",
+    });
+  }
+
+  // check if 'table_name' is empty
+  if (tableData.table_name === "") {
+    return next({
+      status: 400,
+      message: "'table_name' cannot be empty",
+    });
+  }
+
+  // check if 'table_name' is less than 2 characters
   if (tableData.table_name.length < 2) {
     return next({
       status: 400,
-      message: "Table name must be 2 or greater",
+      message: "table_name must be atleast 2 characters long",
+    });
+  }
+
+  // check for 'capacity' is missing
+  if (tableData.capacity === undefined) {
+    return next({
+      status: 400,
+      message: "Request body is missing 'capacity'",
+    });
+  }
+
+  tableData.capacity = Number(tableData.capacity);
+
+  // check if 'capacity' is 1 or greater
+  if (tableData.capacity < 1) {
+    return next({
+      status: 400,
+      message: "capacity must be 1 or greater",
     });
   }
 
@@ -75,6 +109,22 @@ async function tableExists(req, res, next) {
 // ====================================================== //
 
 async function validateSeatReservation(req, res, next) {
+  // check for 'data' property
+  if (req.body.data === undefined) {
+    return next({
+      status: 400,
+      message: "Request body must have a 'data' property.",
+    });
+  }
+
+  // check if reservation_id is missing
+  if(req.body.data.reservation_id === undefined){
+    return next({
+      status: 400,
+      message: "Request body must have a 'reservation_id' property.",
+    });
+  }
+
   // get the foundTable
   const { table } = res.locals;
   const { reservation_id } = req.body.data;
@@ -85,7 +135,7 @@ async function validateSeatReservation(req, res, next) {
   // if no reservation found for provided id then throw error
   if (!reservation) {
     return next({
-      status: 400,
+      status: 404,
       message: `Reservation for id ${reservation_id} not found.`,
     });
   }
@@ -125,7 +175,7 @@ async function create(req, res, next) {
 
   const data = await service.create(newTable);
 
-  res.json({ data });
+  res.status(201).json({ data });
 }
 
 // ====================================================== //
@@ -135,7 +185,6 @@ async function update(req, res, next) {
   const { table } = res.locals;
 
   const data = await service.update(table.table_id, Number(reservation_id));
-  console.log(data);
 
   res.json({ data });
 }
@@ -145,5 +194,9 @@ async function update(req, res, next) {
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [validateNewTable, asyncErrorBoundary(create)],
-  update: [tableExists, validateSeatReservation, update],
+  update: [
+    asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(validateSeatReservation),
+    asyncErrorBoundary(update),
+  ],
 };

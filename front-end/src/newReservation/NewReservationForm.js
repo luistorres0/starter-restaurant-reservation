@@ -7,7 +7,6 @@ import formatReservationDate from "../utils/format-reservation-date";
 const NewReservationForm = ({ loadReservations, date }) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
-  console.log(date);
 
   const defaultFormData = {
     first_name: "",

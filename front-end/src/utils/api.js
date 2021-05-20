@@ -88,3 +88,8 @@ export async function updateTable(tableId, updateData) {
   const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   return await fetchJson(url, { method: "PUT", headers, body: JSON.stringify(updateData) }, []);
 }
+
+export async function getReservationById(reservation_id) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+  return await fetchJson(url, { headers }, []);
+}

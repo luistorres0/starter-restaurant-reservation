@@ -18,7 +18,10 @@ const ReservationsTable = ({ reservations }) => {
       </thead>
       <tbody>
         {reservations.map((reservation, index) => (
-          <ReservationRecord key={reservation.reservation_id} reservation={reservation} />
+          <ReservationRecord
+            key={reservation.reservation_id}
+            reservation={reservation}
+          />
         ))}
       </tbody>
     </table>
