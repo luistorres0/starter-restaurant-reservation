@@ -50,17 +50,7 @@ async function validateNewTable(req, res, next) {
     });
   }
 
-  table_id_max = Math.max(table_id_max, tables.length);
-  table_id_max++;
-  const newId = table_id_max;
-
-  const newTable = {
-    table_id: newId,
-    ...tableData,
-    reservation_id: null,
-  };
-
-  res.locals.newTable = newTable;
+  res.locals.newTable = tableData;
   next();
 }
 
@@ -123,9 +113,10 @@ async function list(req, res, next) {
 async function create(req, res, next) {
   const newTable = res.locals.newTable;
 
-  tables.push(newTable);
+  const data = await service.create(newTable);
+  console.log(data);
 
-  res.json({ data: newTable });
+  res.json({ data });
 }
 
 // ====================================================== //
