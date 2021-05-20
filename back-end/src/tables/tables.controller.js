@@ -1,4 +1,5 @@
-// dummy tables
+//TODO: REMOVE DUMMY DATA WHEN DB IS SETUP
+
 let tables = [
   {
     table_id: 1,
@@ -21,6 +22,10 @@ let tables = [
 ];
 
 let table_id_max = 0;
+
+// ================================================================================================================== //
+// ============================================== VALIDATION MIDDLEWARE ============================================= //
+// ================================================================================================================== //
 
 async function validateNewTable(req, res, next) {
   const tableData = req.body.data;
@@ -56,10 +61,46 @@ async function validateNewTable(req, res, next) {
   next();
 }
 
+// ====================================================== //
+
+async function tableExists(req, res, next) {
+  const { tableId } = req.params;
+
+  const foundTable = tables.find((table) => table.table_id === Number(tableId));
+  if(!foundTable){
+    return next({
+      status: 400,
+      message: `Table ${tableId} not found.`
+    })
+  }
+
+  res.locals.table = foundTable;
+  next();
+}
+
+// ====================================================== //
+
+async function validateSeatReservation(req, res, next){
+  // get the foundTable
+  // try to find the reservation for incoming reservation_id
+  // if reservation found, check if reservation party size is less than or equal to table capacity
+  // also check if table is free
+  // if party size passes check, then assign reservation id to table.reservation_id
+  // if not, throw error
+  // if table is not free throw error
+  next();
+}
+
+// ================================================================================================================== //
+// ================================================= ROUTE HANDLERS ================================================= //
+// ================================================================================================================== //
+
 async function list(req, res, next) {
   const data = tables;
   res.json({ data });
 }
+
+// ====================================================== //
 
 async function create(req, res, next) {
   const newTable = res.locals.newTable;
@@ -69,18 +110,21 @@ async function create(req, res, next) {
   res.json({ data: newTable });
 }
 
+// ====================================================== //
+
 async function update(req, res, next) {
   const { reservation_id } = req.body.data;
-  const { tableId } = req.params;
+  const {table} = res.locals;
 
-  const foundTable = tables.find((table) => table.table_id === Number(tableId));
-  foundTable.reservation_id = Number(reservation_id);
+  table.reservation_id = Number(reservation_id);
 
-  res.json({ data: foundTable });
+  res.json({ data: table });
 }
+
+// ====================================================== //
 
 module.exports = {
   list,
   create: [validateNewTable, create],
-  update,
+  update: [tableExists, update]
 };
