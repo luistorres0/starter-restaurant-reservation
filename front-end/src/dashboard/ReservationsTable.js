@@ -13,6 +13,7 @@ const ReservationsTable = ({ reservations }) => {
           <th>Time</th>
           <th>People</th>
           <th>Mobile #</th>
+          <th>Status</th>
           <th>Seat</th>
         </tr>
       </thead>

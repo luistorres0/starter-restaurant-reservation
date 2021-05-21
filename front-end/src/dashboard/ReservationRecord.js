@@ -9,6 +9,7 @@ const ReservationRecord = (props) => {
     reservation_date,
     reservation_time,
     people,
+    status
   } = props.reservation;
   return (
     <tr>
@@ -19,6 +20,7 @@ const ReservationRecord = (props) => {
       <td>{reservation_time}</td>
       <td>{people}</td>
       <td>{mobile_number}</td>
+      <td>{status}</td>
       <td>
         <a className="btn btn-outline-primary" href={`/reservations/${reservation_id}/seat`}>
           Seat
