@@ -84,7 +84,7 @@ export async function createTable(newTable) {
   return await fetchJson(url, { method: "POST", headers, body: JSON.stringify(newTable) }, []);
 }
 
-export async function updateTable(tableId, updateData) {
+export async function updateTableStatus(tableId, updateData) {
   const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   return await fetchJson(url, { method: "PUT", headers, body: JSON.stringify(updateData) }, []);
 }
@@ -97,4 +97,13 @@ export async function getReservationById(reservation_id) {
 export async function deleteReservationFromTable(tableId) {
   const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   return await fetchJson(url, { method: "DELETE", headers }, []);
+}
+
+export async function updateReservationStatus(reservation_id, status, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
+  return await fetchJson(
+    url,
+    { method: "PUT", headers, signal, body: JSON.stringify({ data: { status } }) },
+    []
+  );
 }

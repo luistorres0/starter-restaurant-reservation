@@ -12,7 +12,7 @@ const RestaurantTableRecord = ({ table, onFinishHandler }) => {
       </td>
       <td>
         {reservation_id ? (
-          <button onClick={() => onFinishHandler(table_id)} data-table-id-finish={table_id}>
+          <button onClick={() => onFinishHandler(table_id, reservation_id)} data-table-id-finish={table_id}>
             Finish
           </button>
         ) : null}

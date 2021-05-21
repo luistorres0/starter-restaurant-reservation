@@ -1,15 +1,17 @@
 import React from "react";
-import { deleteReservationFromTable } from "../utils/api";
+import { deleteReservationFromTable, updateReservationStatus } from "../utils/api";
 import RestaurantTableRecord from "./RestaurantTableRecord";
 
-const RestaurantTablesTable = ({ tables, loadTables }) => {
-  const onFinishHandler = async (table_id) => {
+const RestaurantTablesTable = ({ tables, loadTables, refreshReservations }) => {
+  const onFinishHandler = async (table_id, reservation_id) => {
     const isOk = window.confirm("Is this table ready to seat new guests? This cannot be undone.");
 
     if (isOk) {
       console.log(`Deleting table: ${table_id}`);
       await deleteReservationFromTable(table_id);
+      await updateReservationStatus(reservation_id, "finished");
       await loadTables();
+      await refreshReservations();
     }
   };
 

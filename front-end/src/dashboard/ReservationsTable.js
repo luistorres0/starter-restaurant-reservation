@@ -2,6 +2,9 @@ import React from "react";
 import ReservationRecord from "./ReservationRecord";
 
 const ReservationsTable = ({ reservations }) => {
+  const notFinishedReservations = reservations.filter(
+    (reservation) => reservation.status !== "finished"
+  );
   return (
     <table className="table">
       <thead>
@@ -18,11 +21,8 @@ const ReservationsTable = ({ reservations }) => {
         </tr>
       </thead>
       <tbody>
-        {reservations.map((reservation, index) => (
-          <ReservationRecord
-            key={reservation.reservation_id}
-            reservation={reservation}
-          />
+        {notFinishedReservations.map((reservation, index) => (
+          <ReservationRecord key={reservation.reservation_id} reservation={reservation} />
         ))}
       </tbody>
     </table>

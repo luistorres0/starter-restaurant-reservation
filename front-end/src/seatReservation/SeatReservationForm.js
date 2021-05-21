@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import { getReservationById, updateTable } from "../utils/api";
+import { getReservationById, updateReservationStatus, updateTableStatus } from "../utils/api";
 
-const SeatReservationForm = ({ reservations, tables, loadTables, reservationToSeat }) => {
+const SeatReservationForm = ({
+  reservations,
+  tables,
+  loadTables,
+  refreshReservations,
+  reservationToSeat,
+}) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
   const [tableId, setTableId] = useState(0);
@@ -30,8 +36,11 @@ const SeatReservationForm = ({ reservations, tables, loadTables, reservationToSe
 
     if (validateForm()) {
       try {
-        await updateTable(tableId, { data: { reservation_id } });
-        loadTables();
+        // TODO: investigate transactions
+        await updateTableStatus(tableId, { data: { reservation_id } });
+        await updateReservationStatus(reservation_id, "seated");
+        await loadTables();
+        await refreshReservations();
         history.push("/dashboard");
       } catch (e) {
         setError(e);

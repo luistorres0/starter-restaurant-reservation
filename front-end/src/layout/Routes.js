@@ -43,13 +43,17 @@ function Routes() {
     return () => abortController.abort();
   }
 
+  function refreshReservations() {
+    setReservationsError(null);
+    return listReservations({ date }).then(setReservations).catch(setReservationsError);
+  }
+
   useEffect(loadTables, []);
 
   function loadTables() {
     const abortController = new AbortController();
     setTablesError(null);
-    listTables(abortController.signal).then(setTables).catch(setTablesError);
-    return () => abortController.abort();
+    return listTables(abortController.signal).then(setTables).catch(setTablesError);
   }
 
   return (
@@ -61,7 +65,12 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/reservations/:reservation_id/seat">
-        <SeatReservationForm reservations={reservations} tables={tables} loadTables={loadTables} />
+        <SeatReservationForm
+          reservations={reservations}
+          tables={tables}
+          loadTables={loadTables}
+          refreshReservations={refreshReservations}
+        />
       </Route>
       <Route path="/reservations/new">
         <NewReservationForm loadReservations={loadReservations} date={date} />
@@ -77,6 +86,7 @@ function Routes() {
           tablesError={tablesError}
           date={date}
           loadTables={loadTables}
+          refreshReservations={refreshReservations}
         />
       </Route>
       <Route>
