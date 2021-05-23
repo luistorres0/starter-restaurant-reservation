@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import ReservationsTable from "../dashboard/ReservationsTable";
+import ErrorAlert from "../layout/ErrorAlert";
+import { listReservations } from "../utils/api";
 
 const SearchReservationsView = () => {
   const [matchedReservations, setMatchedReservations] = useState([]);
+  const [error, setError] = useState(null);
   const [formMobileNumber, setFormMobileNumber] = useState("");
 
   const onChangeHandler = (event) => {
@@ -13,6 +16,10 @@ const SearchReservationsView = () => {
     event.preventDefault();
 
     console.log(formMobileNumber);
+    setError(null);
+    listReservations({ mobile_number: formMobileNumber })
+      .then(setMatchedReservations)
+      .catch(setError);
   };
 
   return (
@@ -40,6 +47,7 @@ const SearchReservationsView = () => {
 
       {/* Render the results of the search */}
       <h5 className="my-3">Search Results</h5>
+      <ErrorAlert error={error} />
       <ReservationsTable reservations={matchedReservations} />
     </div>
   );

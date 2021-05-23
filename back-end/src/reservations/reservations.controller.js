@@ -10,7 +10,7 @@ async function list(req, res, next) {
   const { mobile_number } = req.query;
   if (mobile_number) {
     const searchResults = await service.search(mobile_number);
-    res.json({ data: searchResults });
+    return res.json({ data: searchResults });
   }
 
   const { date } = req.query;
