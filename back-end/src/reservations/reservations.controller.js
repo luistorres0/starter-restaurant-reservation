@@ -6,6 +6,13 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./reservations.service");
 
 async function list(req, res, next) {
+  // If a 'mobile_number' query parameter exists, then the request is intended as a search.
+  const { mobile_number } = req.query;
+  if (mobile_number) {
+    const searchResults = await service.search(mobile_number);
+    res.json({ data: searchResults });
+  }
+
   const { date } = req.query;
   const data = await service.list(date);
 
