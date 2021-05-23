@@ -89,6 +89,9 @@ function Routes() {
           refreshReservations={refreshReservations}
         />
       </Route>
+      <Route path="/search">
+        <h1>Search</h1>
+      </Route>
       <Route>
         <NotFound />
       </Route>
