@@ -40,7 +40,9 @@ const NewReservationForm = ({ loadReservations, date }) => {
 
     if (validateForm()) {
       try {
-        const createdReservation = await createReservation({ data: { ...formData } });
+        const createdReservation = await createReservation({
+          data: { ...formData, status: "booked" },
+        });
 
         formatReservationDate(createdReservation);
 
@@ -48,8 +50,6 @@ const NewReservationForm = ({ loadReservations, date }) => {
         // The 'date' dependency in Routes.js and the 'urlDate' from query parameter were equal, therefore 'useEffect(loadReservations, [date])'
         // detected no change in its dependency 'date' which resulted in not running loadReservations.
         if (createdReservation.reservation_date === date) {
-          console.log(date);
-          console.log("date are a match");
           loadReservations();
         }
 

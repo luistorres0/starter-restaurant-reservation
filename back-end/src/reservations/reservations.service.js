@@ -5,10 +5,18 @@ const list = (date) => {
     return knex("reservations")
       .select("*")
       .where({ reservation_date: date })
-      .orderBy("reservation_time");
+      .orderBy("reservation_time")
+      .then((reservations) =>
+        reservations.filter((reservation) => reservation.status !== "finished")
+      );
   }
 
-  return knex("reservations").select("*").orderBy("reservation_time");
+  return knex("reservations")
+    .select("*")
+    .orderBy("reservation_time")
+    .then((reservations) =>
+      reservations.filter((reservation) => reservation.status !== "finished")
+    );
 };
 
 const create = (newReservation) => {

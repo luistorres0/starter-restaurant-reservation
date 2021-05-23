@@ -122,6 +122,14 @@ function validateNewReservationProperties(req, res, next) {
     });
   }
 
+  // check if reservation status is 'seated' or 'finished'
+  if (newReservation.status === "seated" || newReservation.status === "finished") {
+    return next({
+      status: 400,
+      message: `Reservation status cannot be '${newReservation.status}'. Status must be 'booked' `,
+    });
+  }
+
   next();
 }
 
@@ -132,12 +140,37 @@ async function reservationExists(req, res, next) {
 
   if (!foundReservation) {
     return next({
-      status: 400,
+      status: 404,
       message: `Reservation for id ${reservation_id} not found.`,
     });
   }
 
   res.locals.reservation = foundReservation;
+  next();
+}
+
+async function validateStatus(req, res, next) {
+  const { status } = req.body.data;
+
+  const VALID_STATUS_VALUES = ["booked", "seated", "finished"];
+
+  // If the status is an unknown value, then throw error.
+  if (!VALID_STATUS_VALUES.includes(status)) {
+    return next({
+      status: 400,
+      message: `Status: ${status} is unknown.`,
+    });
+  }
+
+  // Now, if the to-be-updated reservation is has a 'finished' status, throw an error.
+  // I 'finished' reservation cannot be updated.
+  if (res.locals.reservation.status === "finished") {
+    return next({
+      status: 400,
+      message: `This reservation has been finished and cannot be updated.`,
+    });
+  }
+
   next();
 }
 
@@ -167,5 +200,9 @@ module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [validateNewReservationProperties, asyncErrorBoundary(create)],
   read: [asyncErrorBoundary(reservationExists), read],
-  updateReservationStatus,
+  updateReservationStatus: [
+    asyncErrorBoundary(reservationExists),
+    validateStatus,
+    asyncErrorBoundary(updateReservationStatus),
+  ],
 };

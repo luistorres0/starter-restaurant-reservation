@@ -11,7 +11,15 @@ import RestaurantTablesTable from "./RestaurantTablesTable";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ reservations, tables, reservationsError, tablesError, date, loadTables, refreshReservations }) {
+function Dashboard({
+  reservations,
+  tables,
+  reservationsError,
+  tablesError,
+  date,
+  loadTables,
+  refreshReservations,
+}) {
   const history = useHistory();
 
   const handleChangeDate = (newDate) => {
@@ -44,7 +52,11 @@ function Dashboard({ reservations, tables, reservationsError, tablesError, date,
 
       {/* Display the tables */}
       <ErrorAlert error={tablesError} />
-      <RestaurantTablesTable tables={tables} loadTables={loadTables} refreshReservations={refreshReservations} />
+      <RestaurantTablesTable
+        tables={tables}
+        loadTables={loadTables}
+        refreshReservations={refreshReservations}
+      />
     </main>
   );
 }

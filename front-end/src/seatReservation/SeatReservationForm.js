@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import { getReservationById, updateReservationStatus, updateTableStatus } from "../utils/api";
+import {
+  getReservationById,
+  seatReservation,
+} from "../utils/api";
+import formatReservationDate from "../utils/format-reservation-date";
 
 const SeatReservationForm = ({
   reservations,
@@ -37,11 +41,11 @@ const SeatReservationForm = ({
     if (validateForm()) {
       try {
         // TODO: investigate transactions
-        await updateTableStatus(tableId, { data: { reservation_id } });
-        await updateReservationStatus(reservation_id, "seated");
+        await seatReservation(tableId, { data: { reservation_id } });
         await loadTables();
         await refreshReservations();
-        history.push("/dashboard");
+        formatReservationDate(reservation);
+        history.push(`/dashboard?date=${reservation.reservation_date}`);
       } catch (e) {
         setError(e);
       }

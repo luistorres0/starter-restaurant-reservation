@@ -1,6 +1,7 @@
 const { table } = require("../db/connection");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./tables.service");
+const reservationsService = require("../reservations/reservations.service");
 
 //TODO: REMOVE DUMMY DATA WHEN DB IS SETUP
 
@@ -162,6 +163,14 @@ async function validateSeatReservation(req, res, next) {
     });
   }
 
+  // If the reservation is already 'seated', throw error.
+  if (reservation.status === "seated") {
+    return next({
+      status: 400,
+      message: "Reservation has already been seated",
+    });
+  }
+
   // also check if table is free
   if (table.reservation_id) {
     return next({
@@ -194,18 +203,29 @@ async function create(req, res, next) {
 
 // ====================================================== //
 
-async function update(req, res, next) {
+async function seatReservation(req, res, next) {
   const { reservation_id } = req.body.data;
   const { table } = res.locals;
 
-  const data = await service.update(table.table_id, Number(reservation_id));
+  const data = await service.setReservationToTable(table.table_id, Number(reservation_id));
+
+  await reservationsService.updateReservationStatus(Number(reservation_id), "seated");
 
   res.json({ data });
 }
 
+// ====================================================== //
+
 async function freeTable(req, res, next) {
   const table = res.locals.table;
-  const data = await service.removeReservationFromTable(table.table_id);
+  const reservation_id = table.reservation_id;
+  
+  await service.removeReservationFromTable(table.table_id);
+  const data = await reservationsService.updateReservationStatus(
+    Number(reservation_id),
+    "finished"
+  );
+
   res.json({ data });
 }
 
@@ -214,10 +234,10 @@ async function freeTable(req, res, next) {
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [validateNewTable, asyncErrorBoundary(create)],
-  update: [
+  seatReservation: [
     asyncErrorBoundary(tableExists),
     asyncErrorBoundary(validateSeatReservation),
-    asyncErrorBoundary(update),
+    asyncErrorBoundary(seatReservation),
   ],
   freeTable: [asyncErrorBoundary(tableExists), tableIsOccupied, asyncErrorBoundary(freeTable)],
 };

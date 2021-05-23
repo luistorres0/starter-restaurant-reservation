@@ -7,9 +7,8 @@ const RestaurantTablesTable = ({ tables, loadTables, refreshReservations }) => {
     const isOk = window.confirm("Is this table ready to seat new guests? This cannot be undone.");
 
     if (isOk) {
-      console.log(`Deleting table: ${table_id}`);
       await deleteReservationFromTable(table_id);
-      await updateReservationStatus(reservation_id, "finished");
+      // await updateReservationStatus(reservation_id, "finished");
       await loadTables();
       await refreshReservations();
     }
@@ -18,7 +17,7 @@ const RestaurantTablesTable = ({ tables, loadTables, refreshReservations }) => {
   return (
     <div>
       <h4 className="mt-5 mb-1">Tables</h4>
-      <table className="table w-25">
+      <table className="table w-100">
         <thead>
           <tr>
             <th>Table ID</th>

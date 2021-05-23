@@ -84,7 +84,7 @@ export async function createTable(newTable) {
   return await fetchJson(url, { method: "POST", headers, body: JSON.stringify(newTable) }, []);
 }
 
-export async function updateTableStatus(tableId, updateData) {
+export async function seatReservation(tableId, updateData) {
   const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   return await fetchJson(url, { method: "PUT", headers, body: JSON.stringify(updateData) }, []);
 }
