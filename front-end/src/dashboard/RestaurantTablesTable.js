@@ -1,5 +1,5 @@
 import React from "react";
-import { deleteReservationFromTable, updateReservationStatus } from "../utils/api";
+import { deleteReservationFromTable } from "../utils/api";
 import RestaurantTableRecord from "./RestaurantTableRecord";
 
 const RestaurantTablesTable = ({ tables, loadTables, refreshReservations }) => {

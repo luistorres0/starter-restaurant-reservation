@@ -8,6 +8,7 @@ import NewReservationForm from "../newReservation/NewReservationForm";
 import NewTableForm from "../newTable/NewTableForm";
 import SeatReservationForm from "../seatReservation/SeatReservationForm";
 import { listReservations, listTables } from "../utils/api";
+import SearchReservationsView from "../search/SearchReservationsView";
 
 /**
  * Defines all the routes for the application.
@@ -90,7 +91,7 @@ function Routes() {
         />
       </Route>
       <Route path="/search">
-        <h1>Search</h1>
+        <SearchReservationsView />
       </Route>
       <Route>
         <NotFound />
