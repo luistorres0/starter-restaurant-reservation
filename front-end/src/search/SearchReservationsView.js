@@ -6,6 +6,7 @@ import { listReservations } from "../utils/api";
 const SearchReservationsView = () => {
   const [matchedReservations, setMatchedReservations] = useState([]);
   const [error, setError] = useState(null);
+  const [noResultsFound, setNoResultsFound] = useState(false);
   const [formMobileNumber, setFormMobileNumber] = useState("");
 
   const onChangeHandler = (event) => {
@@ -15,11 +16,21 @@ const SearchReservationsView = () => {
   const onSubmitHandler = (event) => {
     event.preventDefault();
 
-    console.log(formMobileNumber);
     setError(null);
     listReservations({ mobile_number: formMobileNumber })
-      .then(setMatchedReservations)
+      .then((results) => {
+        setMatchedReservations(results);
+        isSearchResultsEmpty(results);
+      })
       .catch(setError);
+  };
+
+  const isSearchResultsEmpty = (results) => {
+    setNoResultsFound(false);
+    if (results.length === 0) {
+      console.log("results is empty");
+      setNoResultsFound(true);
+    }
   };
 
   return (
@@ -49,6 +60,7 @@ const SearchReservationsView = () => {
       <h5 className="my-3">Search Results</h5>
       <ErrorAlert error={error} />
       <ReservationsTable reservations={matchedReservations} />
+      {noResultsFound ? <h6>No reservations found</h6> : null}
     </div>
   );
 };
