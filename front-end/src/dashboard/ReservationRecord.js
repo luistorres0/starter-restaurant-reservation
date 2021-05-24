@@ -11,6 +11,9 @@ const ReservationRecord = (props) => {
     people,
     status,
   } = props.reservation;
+
+  const { onCancel } = props;
+
   return (
     <tr>
       <td>{reservation_id}</td>
@@ -23,10 +26,24 @@ const ReservationRecord = (props) => {
       <td data-reservation-id-status={reservation_id}>{status}</td>
       <td>
         {status === "booked" ? (
-          <a className="btn btn-outline-primary" href={`/reservations/${reservation_id}/seat`}>
+          <a className="btn btn-primary" href={`/reservations/${reservation_id}/seat`}>
             Seat
           </a>
         ) : null}
+      </td>
+      <td>
+        <a className="btn btn-warning" href={`/reservations/${reservation_id}/edit`}>
+          Edit
+        </a>
+      </td>
+      <td>
+        <button
+          className="btn btn-danger"
+          data-reservation-id-cancel={reservation_id}
+          onClick={() => onCancel(reservation_id)}
+        >
+          Cancel
+        </button>
       </td>
     </tr>
   );

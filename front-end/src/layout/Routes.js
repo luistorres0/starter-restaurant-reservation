@@ -65,6 +65,9 @@ function Routes() {
       <Route exact={true} path="/reservations">
         <Redirect to={"/dashboard"} />
       </Route>
+      <Route path="/reservations/:reservation_id/edit">
+        <h2>Edit Reservation</h2>
+      </Route>
       <Route path="/reservations/:reservation_id/seat">
         <SeatReservationForm
           reservations={reservations}
