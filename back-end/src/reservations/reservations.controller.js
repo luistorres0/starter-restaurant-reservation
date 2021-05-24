@@ -159,7 +159,7 @@ async function reservationExists(req, res, next) {
 async function validateStatus(req, res, next) {
   const { status } = req.body.data;
 
-  const VALID_STATUS_VALUES = ["booked", "seated", "finished"];
+  const VALID_STATUS_VALUES = ["booked", "seated", "finished", "cancelled"];
 
   // If the status is an unknown value, then throw error.
   if (!VALID_STATUS_VALUES.includes(status)) {

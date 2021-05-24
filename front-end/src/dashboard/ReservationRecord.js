@@ -37,13 +37,15 @@ const ReservationRecord = (props) => {
         </a>
       </td>
       <td>
-        <button
-          className="btn btn-danger"
-          data-reservation-id-cancel={reservation_id}
-          onClick={() => onCancel(reservation_id)}
-        >
-          Cancel
-        </button>
+        {status !== "cancelled" ? (
+          <button
+            className="btn btn-danger"
+            data-reservation-id-cancel={reservation_id}
+            onClick={() => onCancel(reservation_id)}
+          >
+            Cancel
+          </button>
+        ) : null}
       </td>
     </tr>
   );

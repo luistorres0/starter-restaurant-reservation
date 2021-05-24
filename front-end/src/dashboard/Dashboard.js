@@ -46,7 +46,7 @@ function Dashboard({
       </button>
 
       <ErrorAlert error={reservationsError} />
-      <ReservationsTable reservations={reservations} />
+      <ReservationsTable reservations={reservations} refreshReservations={refreshReservations} />
 
       <hr style={{ borderTop: "1px solid black" }} className="mt-5" />
 
