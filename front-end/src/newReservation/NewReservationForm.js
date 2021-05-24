@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import { createReservation } from "../utils/api";
+import { createReservation, getReservationById, updateReservation } from "../utils/api";
 import formatReservationDate from "../utils/format-reservation-date";
 
-const NewReservationForm = ({ loadReservations, date }) => {
+const NewReservationForm = ({ loadReservations, date, refreshReservations }) => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState([]);
 
@@ -19,6 +19,36 @@ const NewReservationForm = ({ loadReservations, date }) => {
 
   const [formData, setFormData] = useState({ ...defaultFormData });
   const history = useHistory();
+
+  const { reservation_id } = useParams();
+
+  useEffect(() => {
+    if (reservation_id) {
+      getReservationById(reservation_id)
+        .then((reservation) => {
+          formatReservationDate(reservation);
+
+          setFormData({
+            first_name: reservation.first_name,
+            last_name: reservation.last_name,
+            mobile_number: reservation.mobile_number,
+            reservation_date: reservation.reservation_date,
+            reservation_time: reservation.reservation_time,
+            people: reservation.people,
+          });
+        })
+        .catch(setError);
+    } else {
+      setFormData({
+        first_name: "",
+        last_name: "",
+        mobile_number: "",
+        reservation_date: "",
+        reservation_time: "",
+        people: 0,
+      });
+    }
+  }, [reservation_id]);
 
   const onChangeHandler = (event) => {
     const value = event.target.name === "people" ? Number(event.target.value) : event.target.value;
@@ -40,20 +70,32 @@ const NewReservationForm = ({ loadReservations, date }) => {
 
     if (validateForm()) {
       try {
-        const createdReservation = await createReservation({
-          data: { ...formData, status: "booked" },
-        });
+        if (reservation_id) {
+          // TODO: after backend is connected, make api call to update here.
+          const updatedReservation = await updateReservation(reservation_id, {
+            data: { ...formData, status: "booked" },
+          });
 
-        formatReservationDate(createdReservation);
+          await refreshReservations();
 
-        // BUG FIX: Dashboard failed to update reservations when creating reservation on the present day, for the present day.
-        // The 'date' dependency in Routes.js and the 'urlDate' from query parameter were equal, therefore 'useEffect(loadReservations, [date])'
-        // detected no change in its dependency 'date' which resulted in not running loadReservations.
-        if (createdReservation.reservation_date === date) {
-          loadReservations();
+          formatReservationDate(updatedReservation);
+          history.push(`/dashboard?date=${updatedReservation.reservation_date}`);
+        } else {
+          const createdReservation = await createReservation({
+            data: { ...formData, status: "booked" },
+          });
+
+          formatReservationDate(createdReservation);
+
+          // BUG FIX: Dashboard failed to update reservations when creating reservation on the present day, for the present day.
+          // The 'date' dependency in Routes.js and the 'urlDate' from query parameter were equal, therefore 'useEffect(loadReservations, [date])'
+          // detected no change in its dependency 'date' which resulted in not running loadReservations.
+          if (createdReservation.reservation_date === date) {
+            loadReservations();
+          }
+
+          history.push(`/dashboard?date=${createdReservation.reservation_date}`);
         }
-
-        history.push(`/dashboard?date=${createdReservation.reservation_date}`);
       } catch (e) {
         setError(e);
       }
@@ -120,7 +162,7 @@ const NewReservationForm = ({ loadReservations, date }) => {
 
   return (
     <div>
-      <h2 className="mt-3 mb-5">Create New Reservation</h2>
+      <h2 className="mt-3 mb-5">{reservation_id ? "Edit" : "Create"} Reservation</h2>
       {validationErrors.map((valError, index) => (
         <ErrorAlert key={index} error={valError} />
       ))}

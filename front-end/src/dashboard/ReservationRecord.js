@@ -32,9 +32,11 @@ const ReservationRecord = (props) => {
         ) : null}
       </td>
       <td>
-        <a className="btn btn-warning" href={`/reservations/${reservation_id}/edit`}>
-          Edit
-        </a>
+        {status === "booked" ? (
+          <a className="btn btn-warning" href={`/reservations/${reservation_id}/edit`}>
+            Edit
+          </a>
+        ) : null}
       </td>
       <td>
         {status !== "cancelled" ? (

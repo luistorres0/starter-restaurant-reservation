@@ -19,7 +19,7 @@ import SearchReservationsView from "../search/SearchReservationsView";
  */
 function Routes() {
   const urlDate = new URLSearchParams(useLocation().search).get("date");
-  const date = urlDate || today(); //TODO: CHANGE BACK TO 'today()' AFTER TESTING SEAT RESERVATIONS ROUTE
+  const date = urlDate || today();
 
   // State variable for the reservations
   const [reservations, setReservations] = useState([]);
@@ -66,7 +66,11 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/reservations/:reservation_id/edit">
-        <h2>Edit Reservation</h2>
+        <NewReservationForm
+          loadReservations={loadReservations}
+          date={date}
+          refreshReservations={refreshReservations}
+        />
       </Route>
       <Route path="/reservations/:reservation_id/seat">
         <SeatReservationForm

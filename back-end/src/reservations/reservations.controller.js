@@ -50,11 +50,11 @@ function validateNewReservationProperties(req, res, next) {
   }
 
   for (let prop in newReservation) {
-    if (prop !== "people") {
+    if (prop !== "people" && prop !== "reservation_id") {
       if (!newReservation[prop].length) {
         return next({
           status: 400,
-          message: `${prop} cannot be empty.`,
+          message: `${prop} cannot be empty. ${prop}: ${newReservation[prop]}`,
         });
       }
     }
@@ -203,6 +203,15 @@ async function updateReservationStatus(req, res, next) {
   res.json({ data });
 }
 
+async function update(req, res, next) {
+  const updateData = req.body.data;
+  const { reservation_id } = req.params;
+
+  const data = await service.update(Number(reservation_id), updateData);
+
+  res.json({ data });
+}
+
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [validateNewReservationProperties, asyncErrorBoundary(create)],
@@ -211,5 +220,10 @@ module.exports = {
     asyncErrorBoundary(reservationExists),
     validateStatus,
     asyncErrorBoundary(updateReservationStatus),
+  ],
+  update: [
+    asyncErrorBoundary(reservationExists),
+    validateNewReservationProperties,
+    asyncErrorBoundary(update),
   ],
 };
