@@ -28,13 +28,12 @@ const SearchReservationsView = () => {
   const isSearchResultsEmpty = (results) => {
     setNoResultsFound(false);
     if (results.length === 0) {
-      console.log("results is empty");
       setNoResultsFound(true);
     }
   };
 
   return (
-    <div>
+    <>
       <h2 className="mt-3 mb-5">Search</h2>
       {/* Render the form for searching by mobile number */}
       <form onSubmit={onSubmitHandler}>
@@ -61,7 +60,7 @@ const SearchReservationsView = () => {
       <ErrorAlert error={error} />
       <ReservationsTable reservations={matchedReservations} />
       {noResultsFound ? <h6>No reservations found</h6> : null}
-    </div>
+    </>
   );
 };
 

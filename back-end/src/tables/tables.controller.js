@@ -3,31 +3,6 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const service = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
 
-//TODO: REMOVE DUMMY DATA WHEN DB IS SETUP
-
-let tables = [
-  {
-    table_id: 1,
-    table_name: "#1",
-    capacity: 4,
-    reservation_id: null,
-  },
-  {
-    table_id: 2,
-    table_name: "#2",
-    capacity: 3,
-    reservation_id: null,
-  },
-  {
-    table_id: 3,
-    table_name: "#3",
-    capacity: 6,
-    reservation_id: null,
-  },
-];
-
-let table_id_max = 0;
-
 // ================================================================================================================== //
 // ============================================== VALIDATION MIDDLEWARE ============================================= //
 // ================================================================================================================== //
@@ -219,7 +194,7 @@ async function seatReservation(req, res, next) {
 async function freeTable(req, res, next) {
   const table = res.locals.table;
   const reservation_id = table.reservation_id;
-  
+
   await service.removeReservationFromTable(table.table_id);
   const data = await reservationsService.updateReservationStatus(
     Number(reservation_id),

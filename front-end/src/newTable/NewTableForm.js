@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import { createTable } from "../utils/api";
+import {v4 as uuidv4} from "uuid";
 
 const NewTableForm = ({ loadTables }) => {
   const [error, setError] = useState(null);
@@ -90,11 +91,11 @@ const NewTableForm = ({ loadTables }) => {
   };
 
   return (
-    <div>
+    <>
       <h2 className="mt-3 mb-5">Create Table</h2>
 
-      {validationErrors.map((valError, index) => (
-        <ErrorAlert key={index} error={valError} />
+      {validationErrors.map((valError) => (
+        <ErrorAlert key={uuidv4()} error={valError} />
       ))}
 
       <form onSubmit={onCreateHandler} className="w-50">
@@ -138,7 +139,7 @@ const NewTableForm = ({ loadTables }) => {
         </div>
       </form>
       <ErrorAlert error={error} />
-    </div>
+    </>
   );
 };
 

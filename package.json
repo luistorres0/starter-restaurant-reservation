@@ -48,5 +48,7 @@
   "keywords": [],
   "author": "Thinkful, Inc.",
   "license": "UNLICENSED",
-  "dependencies": {}
+  "dependencies": {
+    "uuid": "^8.3.2"
+  }
 }

@@ -28,7 +28,7 @@ function Routes() {
   const [reservationsError, setReservationsError] = useState(null);
 
   // State variable for the tables
-  const [tables, setTables] = useState([]); //TODO: CHANGE DEFAULT TO NULL WHEN API FETCH IS DONE
+  const [tables, setTables] = useState([]);
 
   // For setting an error if fetching the tables goes wrong.
   const [tablesError, setTablesError] = useState(null);

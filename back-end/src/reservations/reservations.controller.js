@@ -215,7 +215,7 @@ async function update(req, res, next) {
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [validateNewReservationProperties, asyncErrorBoundary(create)],
-  read: [asyncErrorBoundary(reservationExists), read],
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   updateReservationStatus: [
     asyncErrorBoundary(reservationExists),
     validateStatus,

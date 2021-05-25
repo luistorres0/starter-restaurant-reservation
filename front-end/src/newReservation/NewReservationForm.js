@@ -3,6 +3,7 @@ import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
 import { createReservation, getReservationById, updateReservation } from "../utils/api";
 import formatReservationDate from "../utils/format-reservation-date";
+import { v4 as uuidv4 } from "uuid";
 
 const NewReservationForm = ({ loadReservations, date, refreshReservations }) => {
   const [error, setError] = useState(null);
@@ -71,7 +72,6 @@ const NewReservationForm = ({ loadReservations, date, refreshReservations }) => 
     if (validateForm()) {
       try {
         if (reservation_id) {
-          // TODO: after backend is connected, make api call to update here.
           const updatedReservation = await updateReservation(reservation_id, {
             data: { ...formData, status: "booked" },
           });
@@ -161,10 +161,10 @@ const NewReservationForm = ({ loadReservations, date, refreshReservations }) => 
   };
 
   return (
-    <div>
+    <>
       <h2 className="mt-3 mb-5">{reservation_id ? "Edit" : "Create"} Reservation</h2>
-      {validationErrors.map((valError, index) => (
-        <ErrorAlert key={index} error={valError} />
+      {validationErrors.map((valError) => (
+        <ErrorAlert key={uuidv4()} error={valError} />
       ))}
       <form onSubmit={onCreateHandler} className="w-50">
         <div className="form-group row">
@@ -259,7 +259,6 @@ const NewReservationForm = ({ loadReservations, date, refreshReservations }) => 
               id="mobile_number"
               name="mobile_number"
               onChange={onChangeHandler}
-              // pattern="[0-9]{3}-[0-9]{4}"
               placeholder="888-888-8888"
               value={formData.mobile_number}
               required
@@ -276,7 +275,7 @@ const NewReservationForm = ({ loadReservations, date, refreshReservations }) => 
         </div>
       </form>
       <ErrorAlert error={error} />
-    </div>
+    </>
   );
 };
 

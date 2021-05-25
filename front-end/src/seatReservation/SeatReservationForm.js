@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import {
-  getReservationById,
-  seatReservation,
-} from "../utils/api";
+import { getReservationById, seatReservation } from "../utils/api";
 import formatReservationDate from "../utils/format-reservation-date";
+import { v4 as uuidv4 } from "uuid";
 
 const SeatReservationForm = ({
   reservations,
@@ -40,7 +38,6 @@ const SeatReservationForm = ({
 
     if (validateForm()) {
       try {
-        // TODO: investigate transactions
         await seatReservation(tableId, { data: { reservation_id } });
         await loadTables();
         await refreshReservations();
@@ -85,11 +82,11 @@ const SeatReservationForm = ({
   };
 
   return (
-    <div>
+    <>
       <h2 className="mt-3 mb-5">Seat Reservation</h2>
 
-      {validationErrors.map((valError, index) => (
-        <ErrorAlert key={index} error={valError} />
+      {validationErrors.map((valError) => (
+        <ErrorAlert key={uuidv4()} error={valError} />
       ))}
 
       <form onSubmit={onCreateHandler} className="w-50">
@@ -105,8 +102,6 @@ const SeatReservationForm = ({
               onChange={onChangeHandler}
               value={tableId}
             >
-              {/* TODO: OPTIONS WITH TABLES */}
-              {/* First the default option */}
               <option defaultValue={0}>Select table</option>
               {tables.map((table) => (
                 <option key={table.table_id} value={table.table_id}>
@@ -126,7 +121,7 @@ const SeatReservationForm = ({
         </div>
       </form>
       <ErrorAlert error={error} />
-    </div>
+    </>
   );
 };
 
