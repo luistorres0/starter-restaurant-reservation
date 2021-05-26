@@ -13,10 +13,11 @@ Some features include:
 - Cancel a reservation.
 
 ## Screenshots
-<img src="readme-images/dashboard.jpg" alt="alt text" title="Title" width="600" />&nbsp;
-<img src="readme-images/createReservation.jpg" alt="alt text" title="Title" width="600" />&nbsp;
-<img src="readme-images/createTable.jpg" alt="alt text" title="Title" width="600" />&nbsp;
-<img src="readme-images/search.jpg" alt="alt text" title="Title" width="600" />&nbsp;
+
+<img src="https://github.com/luistorres0/starter-restaurant-reservation/blob/main/readme-images/dashboard.JPG" alt="alt text" title="Title" width="600" />&nbsp;
+<img src="https://github.com/luistorres0/starter-restaurant-reservation/blob/main/readme-images/createReservation.JPG" alt="alt text" title="Title" width="600" />&nbsp;
+<img src="https://github.com/luistorres0/starter-restaurant-reservation/blob/main/readme-images/createTable.JPG" alt="alt text" title="Title" width="600" />&nbsp;
+<img src="https://github.com/luistorres0/starter-restaurant-reservation/blob/main/readme-images/search.JPG" alt="alt text" title="Title" width="600" />&nbsp;
 
 ## Technologies
 
@@ -29,10 +30,10 @@ The frontend was built using HTML5, CSS3, Javascript, Bootstrap, and React. For 
 3. Create a `.env` file in the `backend` directory.
 4. Modify `.env` with the following:</br>
    <code>
-   &nbsp;DATABASE_URL=_productionURL_</br>
-   &nbsp;DATABASE_URL_DEVELOPMENT=_developmentURL_</br>
-   &nbsp;DATABASE_URL_TEST=_testURL_</br>
-   &nbsp;DATABASE_URL_PREVIEW=_previewURL_</br>
+   &nbsp;DATABASE*URL=\_productionURL*</br>
+   &nbsp;DATABASE*URL_DEVELOPMENT=\_developmentURL*</br>
+   &nbsp;DATABASE*URL_TEST=\_testURL*</br>
+   &nbsp;DATABASE*URL_PREVIEW=\_previewURL*</br>
    &nbsp;LOG_LEVEL=info</br>
    </code>
 5. Replace "productionURL" with the URL to your production database.
@@ -46,14 +47,14 @@ The frontend was built using HTML5, CSS3, Javascript, Bootstrap, and React. For 
 
 ## API
 
-| Endpoint                                                 | Method  | Description                                                                                                         |
-|----------------------------------------------------------|---------|---------------------------------------------------------------------------------------------------------------------|
-| `/reservations`                                          |  GET    | Gets all of the reservations. If 'date' query parameter exists, then gets reservations for that date.               |
-| `/reservations`                                          |  POST   | Creates a new reservation.                                                                                          |
-| `/reservations/:reservation_id`                          |  GET    | Gets the reservation corresponding to 'reservation_id'.                                                             |
-| `/reservations/:reservation_id`                          |  PUT    | Updates the reservation corresponding to 'reservation_id'.                                                          |
-| `/reservations/:reservation_id/status`                   |  PUT    | Updates the reservation status.                                                                                     |
-| `/tables`                                                |  GET    | Gets all of the tables.                                                                                                |
-| `/tables`                                                |  POST   | Creates a table.                                                                                                    |
-| `/tables/:tableId/seat`                                  |  PUT    | Assigns a reservation to a table.                                                                                   |
-| `/tables/:tableId/seat`                                  |  DELETE | Frees a table for future reservations.                                                                              |
+| Endpoint                               | Method | Description                                                                                           |
+| -------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| `/reservations`                        | GET    | Gets all of the reservations. If 'date' query parameter exists, then gets reservations for that date. |
+| `/reservations`                        | POST   | Creates a new reservation.                                                                            |
+| `/reservations/:reservation_id`        | GET    | Gets the reservation corresponding to 'reservation_id'.                                               |
+| `/reservations/:reservation_id`        | PUT    | Updates the reservation corresponding to 'reservation_id'.                                            |
+| `/reservations/:reservation_id/status` | PUT    | Updates the reservation status.                                                                       |
+| `/tables`                              | GET    | Gets all of the tables.                                                                               |
+| `/tables`                              | POST   | Creates a table.                                                                                      |
+| `/tables/:tableId/seat`                | PUT    | Assigns a reservation to a table.                                                                     |
+| `/tables/:tableId/seat`                | DELETE | Frees a table for future reservations.                                                                |
