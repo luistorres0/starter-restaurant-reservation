@@ -26,14 +26,14 @@ const ReservationRecord = (props) => {
       <td data-reservation-id-status={reservation_id}>{status}</td>
       <td>
         {status === "booked" ? (
-          <a className="btn btn-primary" href={`/reservations/${reservation_id}/seat`}>
+          <a className="btn btn-outline-primary" href={`/reservations/${reservation_id}/seat`}>
             Seat
           </a>
         ) : null}
       </td>
       <td>
         {status === "booked" ? (
-          <a className="btn btn-warning" href={`/reservations/${reservation_id}/edit`}>
+          <a className="btn btn-outline-primary" href={`/reservations/${reservation_id}/edit`}>
             Edit
           </a>
         ) : null}
@@ -41,7 +41,7 @@ const ReservationRecord = (props) => {
       <td>
         {status !== "cancelled" ? (
           <button
-            className="btn btn-danger"
+            className="btn btn-outline-primary"
             data-reservation-id-cancel={reservation_id}
             onClick={() => onCancel(reservation_id)}
           >

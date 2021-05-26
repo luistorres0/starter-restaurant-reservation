@@ -24,7 +24,7 @@ const RestaurantTablesTable = ({ tables, loadTables, refreshReservations }) => {
     <>
       <h4 className="mt-5 mb-1">Tables</h4>
       <table className="table w-100">
-        <thead>
+        <thead className="thead-dark">
           <tr>
             <th>Table ID</th>
             <th>Table Name</th>

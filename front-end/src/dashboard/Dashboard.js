@@ -33,15 +33,15 @@ function Dashboard({
         <h4 className="mb-0">Reservations for {date}</h4>
       </div>
 
-      <button onClick={() => handleChangeDate(today())} className="btn btn-primary">
+      <button onClick={() => handleChangeDate(today())} className="btn btn-primary mb-3">
         Today
       </button>
 
-      <button onClick={() => handleChangeDate(previous(date))} className="btn btn-primary mx-2">
+      <button onClick={() => handleChangeDate(previous(date))} className="btn btn-primary mb-3 mx-2">
         Previous
       </button>
 
-      <button onClick={() => handleChangeDate(next(date))} className="btn btn-primary">
+      <button onClick={() => handleChangeDate(next(date))} className="btn btn-primary mb-3">
         Next
       </button>
 

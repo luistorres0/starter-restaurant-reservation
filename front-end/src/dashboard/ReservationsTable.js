@@ -24,32 +24,34 @@ const ReservationsTable = ({ reservations, refreshReservations }) => {
 
   return (
     <>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>People</th>
-            <th>Mobile #</th>
-            <th>Status</th>
-            <th>Seat</th>
-            <th>Edit</th>
-            <th>Cancel</th>
-          </tr>
-        </thead>
-        <tbody>
-          {notFinishedReservations.map((reservation) => (
-            <ReservationRecord
-              key={reservation.reservation_id}
-              reservation={reservation}
-              onCancel={onCancelReservationHandler}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className="table-responsive">
+        <table className="table">
+          <thead className="thead-dark">
+            <tr>
+              <th>ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>People</th>
+              <th>Mobile #</th>
+              <th>Status</th>
+              <th>Seat</th>
+              <th>Edit</th>
+              <th>Cancel</th>
+            </tr>
+          </thead>
+          <tbody>
+            {notFinishedReservations.map((reservation) => (
+              <ReservationRecord
+                key={reservation.reservation_id}
+                reservation={reservation}
+                onCancel={onCancelReservationHandler}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
       <ErrorAlert error={error} />
     </>
   );
