@@ -21,6 +21,7 @@ build/
 .vscode/
 .vercel
 .screenshots/
+INSTRUCTIONS.md
 
 npm-debug.log*
 yarn-debug.log*
